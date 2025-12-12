@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Repaso EXAMEN – Seguridad y Soberanía Alimentaria</title>
+<style>
+  body{font-family:Arial,sans-serif;max-width:1100px;margin:20px auto;color:#000;line-height:1.45}
+  h1{text-align:center;margin-bottom:6px}
+  .sub{text-align:center;margin-top:0;color:#222}
+  .controls{border:1px solid #ccc;border-radius:10px;padding:12px;background:#fafafa;display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;align-items:center;margin:16px 0}
+  .controls>div{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  select,button{font-size:14px;padding:7px 10px}
+  label{user-select:none}
+  .pill{display:inline-block;padding:3px 8px;border:1px solid #bbb;border-radius:999px;font-size:12px;background:#fff}
+  .question{border:1px solid #ccc;border-radius:10px;padding:14px;margin:14px 0;background:#fff}
+  .meta{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:6px}
+  .tema{font-size:12px;color:#444}
+  .qtitle{font-weight:bold;margin:6px 0 10px}
+  .options{display:flex;flex-direction:column;gap:8px}
+  .options button{text-align:left;border:1px solid #999;border-radius:8px;background:#fff;cursor:pointer;color:#000}
+  .options button:disabled{cursor:default;opacity:1}
+  .correct{background:#e9ffe9 !important;border-color:#0a7a0a !important;color:#0a7a0a !important;font-weight:bold}
+  .incorrect{background:#ffe9e9 !important;border-color:#b30000 !important;color:#b30000 !important;font-weight:bold}
+  .feedback{display:none;margin-top:10px;padding:10px;border-left:4px solid #000;background:#f2f2f2;border-radius:6px}
+  .feedback .small{color:#111;font-size:13px}
+  .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px}
+  .mini{font-size:13px;padding:6px 10px;border-radius:8px;border:1px solid #999;background:#fff;cursor:pointer}
+  .hidden{display:none !important}
+</style>
+</head>
+<body>
+
+<h1>Repaso EXAMEN – Seguridad y Soberanía Alimentaria</h1>
+<p class="sub"><b>Banco (80)</b> · Opciones mezcladas + longitud balanceada · Feedback con justificación</p>
+
+<div class="controls">
+  <div>
+    <strong>Tema:</strong>
+    <select id="temaSelect" onchange="applyFilters()">
+      <option value="todos">Todos</option>
+      <option value="DAA">Derecho a la alimentación y DDHH</option>
+      <option value="SAN">Seguridad Alimentaria Nutricional</option>
+      <option value="INSAN">Inseguridad, vulnerabilidad y estabilidad</option>
+      <option value="CULT">Cultura alimentaria y consumo</option>
+      <option value="POL">Políticas sociales y accesibilidad</option>
+      <option value="GLOB">Globalización y modernidad alimentaria</option>
+      <option value="SBA">Soberanía alimentaria</option>
+      <option value="GOB">Gobernanza e institucionalidad</option>
+    </select>
+  </div>
+  <div>
+    <label><input type="checkbox" id="balanceLen" checked onchange="resetAll()"> Balancear longitud</label>
+    <span class="pill" id="stats">Respondidas: 0 · Correctas: 0 · %: 0%</span>
+    <button onclick="resetAll()">Reiniciar todo</button>
+  </div>
+</div>
+
+<div id="questions"></div>
+
+<script>
+const BANK = [{"id": "q1", "tema": "DAA", "q": "1) En el marco de derechos, ¿qué diferencia clave hay entre “necesidad” y “derecho” en alimentación?", "opts": ["Un derecho implica obligaciones del Estado y posibilidad de exigir cumplimiento.", "Un derecho depende de donaciones voluntarias de terceros.", "Una necesidad siempre se satisface sola con mercado.", "Necesidad y derecho son términos equivalentes."], "correct": 0, "why": "Un derecho humano genera deberes estatales y vías de exigibilidad; no queda en caridad."}, {"id": "q2", "tema": "DAA", "q": "2) ¿Qué medida pública se asocia más con la obligación de “respetar” el derecho a la alimentación?", "opts": ["Evitar políticas que bloqueen el acceso de un grupo a alimentos por su condición social.", "Financiar exclusivamente campañas publicitarias privadas.", "Reemplazar toda regulación por acuerdos voluntarios.", "Delegar la política alimentaria a una sola empresa."], "correct": 0, "why": "“Respetar” implica no interferir: no tomar acciones que impidan a las personas alimentarse."}, {"id": "q3", "tema": "DAA", "q": "3) ¿Cuál ilustra mejor la obligación estatal de “proteger” el derecho a la alimentación?", "opts": ["Sancionar a quienes adulteran alimentos poniendo en riesgo la salud.", "Dejar sin control la venta de productos contaminados.", "Reducir toda inspección bromatológica.", "Negar información pública sobre riesgos alimentarios."], "correct": 0, "why": "“Proteger” exige que el Estado impida que terceros vulneren el derecho (inocuidad/fraude)."}, {"id": "q4", "tema": "DAA", "q": "4) ¿Qué describe mejor “adecuación” en el derecho a la alimentación?", "opts": ["Debe ser suficiente, inocua, nutritiva y compatible con el contexto cultural.", "Solo importa alcanzar un mínimo calórico.", "Se define por lo que resulte más barato en el mercado.", "Se cumple con alimentos idénticos en todo el mundo."], "correct": 0, "why": "Adecuación no es solo calorías: incluye calidad nutricional, inocuidad y aceptabilidad cultural."}, {"id": "q5", "tema": "DAA", "q": "5) ¿Qué se vincula más con el principio de progresividad?", "opts": ["Avanzar sostenidamente sin retrocesos injustificados en la garantía del derecho.", "Aplicar medidas solo en crisis y luego abandonarlas.", "Mantener políticas sin evaluar resultados.", "Reemplazar derechos por asistencia ocasional."], "correct": 0, "why": "Progresividad: mejora sostenida con máximo de recursos disponibles; evitar retrocesos sin fundamento."}, {"id": "q6", "tema": "DAA", "q": "6) ¿Qué ejemplo es “accesibilidad física” al alimento?", "opts": ["Transporte y puntos de venta razonablemente cercanos para la población.", "Precios bajos solo para algunos grupos.", "Aumento del PBI nacional.", "Publicidad intensiva de productos."], "correct": 0, "why": "Accesibilidad física/material: que se pueda llegar a los alimentos (distancia, movilidad, infraestructura)."}, {"id": "q7", "tema": "DAA", "q": "7) ¿Qué fortalece la exigibilidad del derecho a la alimentación?", "opts": ["Mecanismos de reclamo y monitoreo con participación social.", "Tratar el tema solo como recomendación individual.", "Evitar registros y datos públicos.", "Depender exclusivamente de campañas solidarias."], "correct": 0, "why": "Exigibilidad: reclamo/monitoreo/rendición de cuentas; no solo “buena voluntad”."}, {"id": "q8", "tema": "DAA", "q": "8) ¿Qué refleja mejor “no discriminación” en políticas alimentarias?", "opts": ["Medidas accesibles a todos, sin exclusiones por motivos prohibidos, con foco en grupos vulnerados.", "Restringir programas a quienes tengan empleo formal.", "Excluir migrantes de toda cobertura.", "Definir acceso según reputación social."], "correct": 0, "why": "No discriminación: acceso universal sin exclusiones por raza/origen/sexo/etc."}, {"id": "q9", "tema": "DAA", "q": "9) En derecho a la alimentación, ¿qué información pública es clave?", "opts": ["Información clara sobre riesgos, composición y calidad de los alimentos.", "Solo publicidad de marcas.", "Datos reservados solo para empresas.", "Mensajes sin evidencia sobre dietas."], "correct": 0, "why": "Incluye acceso a información para decisiones informadas (inocuidad, composición, riesgos)."}, {"id": "q10", "tema": "DAA", "q": "10) ¿Qué acción se asocia más a “garantizar/realizar” el derecho?", "opts": ["Adoptar políticas y programas con presupuesto para asegurar acceso efectivo cuando el mercado no alcanza.", "No intervenir nunca aunque haya hambre.", "Eliminar toda política social.", "Dejar el tema solo a ONGs."], "correct": 0, "why": "“Realizar” implica medidas activas (políticas, programas, recursos) para asegurar el derecho."}, {"id": "q11", "tema": "SAN", "q": "11) En SAN, el componente “consumo” a nivel de hogar refiere a:", "opts": ["Qué y cuánto come efectivamente la familia según disponibilidad y acceso.", "Solo la producción nacional de alimentos.", "Únicamente el precio internacional de granos.", "La capacidad de exportación del país."], "correct": 0, "why": "Consumo = ingesta real del hogar (cantidad/calidad), no macroproducción."}, {"id": "q12", "tema": "SAN", "q": "12) Puede existir alta disponibilidad nacional y, aun así, INSAN porque:", "opts": ["El problema puede estar en el acceso económico o en la distribución.", "La disponibilidad siempre garantiza alimentación adecuada.", "La cultura anula cualquier restricción.", "La exportación elimina la pobreza."], "correct": 0, "why": "Disponibilidad ≠ acceso: puede haber alimentos pero no capacidad de compra o distribución."}, {"id": "q13", "tema": "SAN", "q": "13) ¿Qué indicador se usa para aproximar “acceso económico” a nivel macro?", "opts": ["Línea de pobreza/indigencia y variables de ingreso.", "Cantidad de influencers gastronómicos.", "Cantidad de marcas importadas.", "Color del packaging."], "correct": 0, "why": "Acceso económico se relaciona con ingresos y pobreza/indigencia (capacidad de compra)."}, {"id": "q14", "tema": "SAN", "q": "14) La “utilización biológica” se afecta especialmente por:", "opts": ["Agua segura, saneamiento, salud e infecciones.", "Cantidad de supermercados.", "Volumen de exportación.", "Publicidad de alimentos."], "correct": 0, "why": "Utilización biológica depende del estado de salud, infecciones, agua potable, saneamiento y cuidados."}, {"id": "q15", "tema": "SAN", "q": "15) ¿Cuál relación es correcta en SAN?", "opts": ["Disponibilidad, acceso, consumo, utilización y estabilidad se condicionan mutuamente.", "Solo disponibilidad define todo.", "El consumo depende solo de la biología.", "La estabilidad no importa si hay alimentos hoy."], "correct": 0, "why": "SAN es multidimensional e interdependiente; estabilidad asegura continuidad."}, {"id": "q16", "tema": "SAN", "q": "16) Si un hogar sustituye frescos por alimentos baratos por falta de plata, el problema principal es:", "opts": ["Acceso económico con impacto en calidad del consumo.", "Solo disponibilidad nacional.", "Solo utilización biológica.", "Solo exportaciones."], "correct": 0, "why": "Restricción de ingresos modifica el patrón de compra y reduce calidad del consumo."}, {"id": "q17", "tema": "SAN", "q": "17) El “acceso social” se ve afectado cuando:", "opts": ["Hay estigma/discriminación que desalienta el uso de programas o servicios.", "Aumenta rendimiento agrícola.", "Crecen exportaciones.", "Mejora el IDH."], "correct": 0, "why": "Acceso social: barreras simbólicas, trato indigno, discriminación."}, {"id": "q18", "tema": "SAN", "q": "18) Para evaluar consumo a nivel hogar se usa frecuentemente:", "opts": ["Encuestas de gastos/ingresos y registros de compra/ingesta.", "Solo el PBI.", "Solo el tipo de cambio.", "Índices bursátiles."], "correct": 0, "why": "Herramientas de hogar permiten estimar consumo y acceso (patrones de compra/ingesta)."}, {"id": "q19", "tema": "SAN", "q": "19) Una suba de precios de básicos impacta primero en SAN porque:", "opts": ["Reduce capacidad de compra (acceso económico).", "Aumenta disponibilidad automáticamente.", "Mejora utilización biológica.", "Aumenta estabilidad."], "correct": 0, "why": "Precios altos deterioran acceso económico, sobre todo en hogares vulnerables."}, {"id": "q20", "tema": "SAN", "q": "20) La SAN contemporánea considera que:", "opts": ["Importa cantidad + calidad nutricional + inocuidad + acceso + continuidad.", "Se mide solo por calorías promedio.", "Se resuelve solo exportando.", "El consumo no importa si hay oferta."], "correct": 0, "why": "SAN moderna integra inocuidad, calidad, acceso, utilización y estabilidad."}, {"id": "q21", "tema": "INSAN", "q": "21) Inseguridad alimentaria “transitoria” es cuando:", "opts": ["Ocurre por un shock puntual y puede revertirse al cesar el evento.", "Se mantiene por años por causas estructurales.", "Se repite cada estación por calendario.", "No se relaciona con crisis."], "correct": 0, "why": "Transitoria: ligada a crisis/shocks de corto plazo."}, {"id": "q22", "tema": "INSAN", "q": "22) Inseguridad alimentaria “estacional” se caracteriza por:", "opts": ["Patrón cíclico asociado a épocas del año (clima/ingresos/oferta).", "Crisis única y excepcional.", "Daño estructural permanente.", "Independiente del calendario."], "correct": 0, "why": "Estacional: se repite en periodos del año por variaciones previsibles."}, {"id": "q23", "tema": "INSAN", "q": "23) “Estabilidad” se refiere a:", "opts": ["Que disponibilidad/acceso/consumo se mantengan en el tiempo sin interrupciones.", "Solo aumentar exportaciones.", "Cambiar dieta semanalmente.", "Tener más marketing."], "correct": 0, "why": "Estabilidad = continuidad en el tiempo, evitando caídas por shocks (clima, conflictos, precios)."}, {"id": "q24", "tema": "INSAN", "q": "24) Aumenta vulnerabilidad alimentaria cuando:", "opts": ["El hogar tiene ingresos inestables y baja capacidad de afrontar shocks.", "Hay agua potable y saneamiento.", "Se diversifican ingresos.", "Hay redes de apoyo fuertes."], "correct": 0, "why": "Vulnerabilidad sube con inestabilidad económica y baja resiliencia."}, {"id": "q25", "tema": "INSAN", "q": "25) “Riesgo de caer en inseguridad alimentaria” corresponde a:", "opts": ["Vulnerabilidad alimentaria.", "Disponibilidad.", "Adecuación cultural.", "Producción primaria."], "correct": 0, "why": "Vulnerabilidad = probabilidad de deterioro del acceso o consumo ante eventos adversos."}, {"id": "q26", "tema": "INSAN", "q": "26) Fortalece estabilidad a nivel país/territorio:", "opts": ["Almacenamiento adecuado y planes de contingencia ante déficit.", "Solo publicidad.", "Solo exportación.", "Eliminar regulación."], "correct": 0, "why": "Infraestructura y contingencia reducen caídas de acceso/consumo."}, {"id": "q27", "tema": "INSAN", "q": "27) Cortes de rutas por 3 semanas afectan primero:", "opts": ["Acceso físico/material y distribución.", "Adecuación cultural.", "IDH.", "Preferencias."], "correct": 0, "why": "La interrupción logística golpea acceso físico aunque exista oferta."}, {"id": "q28", "tema": "INSAN", "q": "28) Más infecciones intestinales en niños afecta SAN por:", "opts": ["Deteriorar utilización biológica de nutrientes.", "Aumentar disponibilidad.", "Mejorar acceso económico.", "Aumentar exportación."], "correct": 0, "why": "Enfermedad afecta absorción/uso de nutrientes (utilización biológica)."}, {"id": "q29", "tema": "INSAN", "q": "29) Una estrategia de afrontamiento típica es:", "opts": ["Reducir porciones, cambiar calidad, endeudarse o usar redes.", "Aumentar publicidad.", "Cambiar el clima.", "Aumentar exportación."], "correct": 0, "why": "Coping: acciones para sobrevivir ante restricción de recursos (porciones/calidad/deuda/redes)."}, {"id": "q30", "tema": "INSAN", "q": "30) Señal de baja estabilidad a nivel país es:", "opts": ["Alta exposición a shocks sin mecanismos de respuesta.", "Buena logística y reservas.", "Diversificación productiva.", "Protección social robusta."], "correct": 0, "why": "Sin respuesta, shocks generan caídas recurrentes de acceso/consumo."}, {"id": "q31", "tema": "CULT", "q": "31) Una “costumbre” alimentaria es:", "opts": ["Regla social compartida que orienta conductas y puede sancionarse socialmente.", "Reacción fisiológica involuntaria.", "Requisito energético universal.", "Preferencia individual aislada."], "correct": 0, "why": "Costumbre = norma social; distinta de hábito (repetición) y de tradiciones/creencias/ritos."}, {"id": "q32", "tema": "CULT", "q": "32) Las “creencias” alimentarias suelen ser:", "opts": ["Ideas aceptadas colectivamente que orientan qué se considera adecuado para comer.", "Solo precios de mercado.", "Solo disponibilidad.", "Solo metabolismo."], "correct": 0, "why": "Creencias: ideas compartidas que sostienen prácticas, tabúes, valoraciones, etc."}, {"id": "q33", "tema": "CULT", "q": "33) Los ritos alimentarios son:", "opts": ["Acciones repetidas asociadas a significados (celebraciones, religión, tradición).", "Índices macroeconómicos.", "Importaciones.", "Infraestructura vial."], "correct": 0, "why": "Ritos: prácticas repetitivas con sentido simbólico/social."}, {"id": "q34", "tema": "CULT", "q": "34) Valorar lo extranjero como superior y luego revalorizar lo local se asocia a:", "opts": ["Modernidad alimentaria (tensión foráneo/local).", "Inocuidad.", "Estabilidad.", "Producción primaria."], "correct": 0, "why": "En modernidad alimentaria conviven valorización de lo foráneo y revalorización de lo local."}, {"id": "q35", "tema": "CULT", "q": "35) Un condicionante psicosocial de elecciones alimentarias es:", "opts": ["Estrés, tiempo disponible y dinámica familiar.", "Solo PBI.", "Solo suelo.", "Solo exportación."], "correct": 0, "why": "Elecciones dependen de factores psicológicos y sociales además de lo económico/cultural."}, {"id": "q36", "tema": "CULT", "q": "36) “Aceptabilidad cultural” implica:", "opts": ["Compatibilidad con prácticas, valores y significados del grupo.", "Alimentos idénticos para todos.", "Solo lo más barato.", "Solo calorías."], "correct": 0, "why": "Pertinencia sociocultural; no es estándar universal."}, {"id": "q37", "tema": "CULT", "q": "37) Ejemplo de aculturación:", "opts": ["Incorporar ingredientes locales manteniendo parte de platos de origen.", "Sube el PBI.", "Mejora saneamiento.", "Baja la tasa de interés."], "correct": 0, "why": "Aculturación: integración de prácticas alimentarias entre culturas."}, {"id": "q38", "tema": "CULT", "q": "38) El “valor simbólico” del alimento incluye:", "opts": ["Identidad, pertenencia, status y significados sociales.", "Solo proteínas.", "Solo precio.", "Solo disponibilidad."], "correct": 0, "why": "El alimento tiene dimensión simbólica (identidad, tradición, religión, afecto, status)."}, {"id": "q39", "tema": "CULT", "q": "39) En crisis económica, suele cambiar primero:", "opts": ["Calidad/variedad de dieta por restricción de ingreso.", "Genética humana.", "Clima global en una semana.", "Definición de DDHH."], "correct": 0, "why": "Crisis afecta consumo: sustituciones hacia alimentos más baratos y menos diversidad."}, {"id": "q40", "tema": "CULT", "q": "40) “Hábito” alimentario se entiende como:", "opts": ["Patrón repetido y generalizado que identifica a un grupo.", "Norma legal estatal.", "Indicador macroeconómico.", "ETA."], "correct": 0, "why": "Hábito = conducta repetida socialmente compartida; distinto de costumbre/rito/creencia."}, {"id": "q41", "tema": "POL", "q": "41) Programa con trámites imposibles y traslados largos falla en:", "opts": ["Accesibilidad material.", "Disponibilidad nacional.", "Utilización biológica.", "Exportación."], "correct": 0, "why": "Accesibilidad material: barreras prácticas (trámites, transporte, tecnologías, horarios, etc.)."}, {"id": "q42", "tema": "POL", "q": "42) Si la gente no usa un programa por estigma/vergüenza, falla en:", "opts": ["Accesibilidad social.", "Producción primaria.", "Disponibilidad de granos.", "IDH."], "correct": 0, "why": "Acceso social: estigmatización y trato indigno limitan el uso real."}, {"id": "q43", "tema": "POL", "q": "43) Mejora acceso económico de hogares vulnerables:", "opts": ["Transferencias/subsidios ajustados por precios y protección social.", "Solo educación sin soporte.", "Quitar protección social.", "Subir precios básicos."], "correct": 0, "why": "Acceso económico se fortalece con ingresos/protección social y medidas frente a precios."}, {"id": "q44", "tema": "POL", "q": "44) Para no discriminación, es clave:", "opts": ["Criterios transparentes + mecanismos de denuncia y corrección.", "Criterios secretos.", "Priorizar por “simpatía”.", "Excluir por nacionalidad."], "correct": 0, "why": "No discriminación exige reglas claras y mecanismos de reclamo/ajuste."}, {"id": "q45", "tema": "POL", "q": "45) Política sin participación ni control ciudadano puede fallar en:", "opts": ["Rendición de cuentas y efectividad.", "Fotos publicitarias.", "Exportación.", "Tipo de cambio."], "correct": 0, "why": "Participación y control social mejoran efectividad, transparencia y corrección de fallas."}, {"id": "q46", "tema": "POL", "q": "46) Relación correcta política social–accesibilidad:", "opts": ["Debe contemplar barreras económicas, materiales y discriminación.", "Se limita a geografía.", "Depende de redes sociales.", "Depende de exportaciones."], "correct": 0, "why": "Accesibilidad es multidimensional y requiere diseño inclusivo."}, {"id": "q47", "tema": "POL", "q": "47) Comedor lejos y sin transporte afecta:", "opts": ["Accesibilidad material/física.", "Adecuación cultural exclusiva.", "Desarrollo humano.", "Producción primaria."], "correct": 0, "why": "Distancia y transporte son barreras materiales."}, {"id": "q48", "tema": "POL", "q": "48) Para mejorar acceso a frescos en barrios sirve:", "opts": ["Ferias/mercados de cercanía y circuitos cortos.", "Más publicidad de ultraprocesados.", "Reducir puntos de venta.", "Eliminar regulación sanitaria."], "correct": 0, "why": "Ferias y circuitos cortos acercan oferta y mejoran acceso físico a frescos."}, {"id": "q49", "tema": "POL", "q": "49) Error frecuente al evaluar accesibilidad:", "opts": ["Confundir existencia de programa con uso real sin barreras.", "Analizar costos de transporte.", "Revisar criterios.", "Considerar estigma."], "correct": 0, "why": "Acceso real requiere mirar barreras; “está el programa” no alcanza."}, {"id": "q50", "tema": "POL", "q": "50) Priorizar grupos vulnerados sin exclusiones prohibidas es:", "opts": ["Igualdad/no discriminación con priorización legítima.", "Discriminación arbitraria.", "Censura.", "Privatización total."], "correct": 0, "why": "Focalizar vulnerabilidades puede ser legítimo si es transparente, proporcional y no discrimina por motivos prohibidos."}, {"id": "q51", "tema": "GLOB", "q": "51) Efecto típico de globalización alimentaria:", "opts": ["Interconexión de mercados y circulación internacional de productos.", "Aislamiento comercial.", "Eliminación del comercio.", "Desaparición de tecnología."], "correct": 0, "why": "Globalización integra mercados, comunicaciones y circulación de bienes."}, {"id": "q52", "tema": "GLOB", "q": "52) Tensión frecuente en modernidad alimentaria:", "opts": ["Homogeneización del consumo vs revalorización local/tradicional.", "Calorías vs proteínas.", "Clima vs agricultura.", "Salarios vs dólar."], "correct": 0, "why": "Modernidad: pautas globales + reacciones que recuperan lo local."}, {"id": "q53", "tema": "GLOB", "q": "53) Definición adecuada de ETA:", "opts": ["Enfermedad infecciosa o tóxica por agentes que ingresan por alimentos/agua.", "Enfermedad genética.", "Trastorno psicológico.", "Lesión traumática."], "correct": 0, "why": "ETAs: cuadros usualmente infecciosos o tóxicos por ingestión de alimentos/agua contaminados."}, {"id": "q54", "tema": "GLOB", "q": "54) Prevención de ETAs requiere:", "opts": ["Educación + controles + buenas prácticas de manipulación y agua segura.", "Solo publicidad.", "Eliminar inspecciones.", "Promover crudos sin control."], "correct": 0, "why": "Prevención combina educación e inocuidad (higiene, temperaturas, BPM, agua potable, controles)."}, {"id": "q55", "tema": "GLOB", "q": "55) Expansión de ultraprocesados se favorece por:", "opts": ["Cadenas globales, logística y marketing masivo.", "Circuitos cortos.", "Agricultura familiar.", "Huertas comunitarias."], "correct": 0, "why": "Redes globales y marketing sostienen disponibilidad y demanda de ultraprocesados."}, {"id": "q56", "tema": "GLOB", "q": "56) Riesgo de cadenas largas globales:", "opts": ["Mayor vulnerabilidad a shocks de precio/logística/conflictos.", "Menor riesgo ante crisis.", "Independencia total.", "Reducción automática del hambre."], "correct": 0, "why": "Cadenas largas son frágiles ante interrupciones y shocks."}, {"id": "q57", "tema": "GLOB", "q": "57) Relación globalización–cultura alimentaria:", "opts": ["Puede homogeneizar consumos y también generar resistencias/revalorización local.", "Borra toda cultura siempre.", "No influye en hábitos.", "Solo afecta países ricos."], "correct": 0, "why": "La influencia es compleja: homogeneización y reacciones identitarias coexisten."}, {"id": "q58", "tema": "GLOB", "q": "58) Indicador sensible a shocks de precios para SAN:", "opts": ["Costo de canasta básica y su peso en el ingreso del hogar.", "Influencers.", "Color del envase.", "Feriados."], "correct": 0, "why": "Si la canasta sube más que el ingreso, cae acceso económico y aumenta INSAN."}, {"id": "q59", "tema": "GLOB", "q": "59) Consecuencia del marketing alimentario intensivo:", "opts": ["Moldear preferencias/demanda, especialmente en niños y adolescentes.", "Mejorar saneamiento.", "Aumentar absorción intestinal.", "Bajar precios globales."], "correct": 0, "why": "Marketing influye elecciones y consumo, impactando calidad de dieta."}, {"id": "q60", "tema": "GLOB", "q": "60) “Interdependencia” alimentaria global significa:", "opts": ["Eventos en un país afectan precios/oferta/acceso en otros.", "Cada país es inmune a shocks.", "Solo cuenta lo local siempre.", "No existe comercio."], "correct": 0, "why": "Mercados conectados: shocks externos repercuten en precios y abastecimiento internos."}, {"id": "q61", "tema": "SBA", "q": "61) En soberanía alimentaria, la producción debe ser principalmente:", "opts": ["Para consumo humano y con cualidades sanitarias, nutricionales y culturales.", "Solo exportación.", "Definida por finanzas.", "Desconectada del territorio."], "correct": 0, "why": "Soberanía: alimentar con calidad y pertinencia cultural, no solo exportar."}, {"id": "q62", "tema": "SBA", "q": "62) “Rol activo de la sociedad civil” implica:", "opts": ["Productores y consumidores participan en decisiones y control social del sistema alimentario.", "Solo el mercado decide.", "La sociedad civil no interviene.", "Solo expertos externos definen."], "correct": 0, "why": "Participación social organizada es central para soberanía (decisión/control)."}, {"id": "q63", "tema": "SBA", "q": "63) “Localización del sistema” se expresa en:", "opts": ["Circuitos cortos y compras cercanas al territorio cuando es posible.", "Sustituir locales por importados siempre.", "Aumentar intermediarios.", "Eliminar ferias."], "correct": 0, "why": "Localización acerca producción-consumo y fortalece mercados locales."}, {"id": "q64", "tema": "SBA", "q": "64) Sustentabilidad de producción familiar/campesina requiere:", "opts": ["Apoyo técnico, acceso a recursos, condiciones laborales dignas y mercados justos.", "Expulsión de pequeños.", "Monocultivo sin rotación.", "Dependencia total de paquetes externos."], "correct": 0, "why": "Sostener producción familiar implica recursos, dignidad y mercados estables."}, {"id": "q65", "tema": "SBA", "q": "65) Estado “activo” en soberanía se refleja en:", "opts": ["Regular y promover producción de alimentos para consumo humano, compras públicas y protección de recursos.", "Ausencia total de regulación.", "Delegar en corporaciones.", "Prohibir participación social."], "correct": 0, "why": "Rol estatal: dirección/regulación/políticas y articulación para sostener soberanía."}, {"id": "q66", "tema": "SBA", "q": "66) En soberanía, recursos naturales:", "opts": ["Gestión sostenible de tierra/agua/semillas/biodiversidad para el largo plazo.", "Uso ilimitado.", "Privatización sin control.", "Ignorar ambiente."], "correct": 0, "why": "Soberanía incluye sustentabilidad ambiental y cuidado de recursos."}, {"id": "q67", "tema": "SBA", "q": "67) Enfoque soberano favorece:", "opts": ["Diversificación orientada a alimentar a la población con calidad.", "Solo commodities.", "Dietas por marketing.", "Excluir mercados locales."], "correct": 0, "why": "Prioriza alimentar (diversidad/calidad) por sobre lógica de commodities."}, {"id": "q68", "tema": "SBA", "q": "68) Actor clave en soberanía alimentaria:", "opts": ["Sociedad civil organizada, Estado y mercado (regulado).", "Solo bancos.", "Solo exportadoras.", "Solo universidades."], "correct": 0, "why": "Se reconoce disputa/participación de actores con regulación y control democrático."}, {"id": "q69", "tema": "SBA", "q": "69) En soberanía, el comercio debe:", "opts": ["Subordinarse al derecho a alimentarse y no dañar producción local cuando corresponda.", "Estar por encima de derechos.", "Servir solo a exportar.", "Eliminar producción local."], "correct": 0, "why": "Derechos y alimentación priorizan sobre acuerdos comerciales si estos dañan acceso o producción local."}, {"id": "q70", "tema": "SBA", "q": "70) El alimento se entiende como:", "opts": ["Derecho y bien social/cultural, no solo mercancía.", "Producto financiero.", "Recurso solo para exportar.", "Bien sin significado cultural."], "correct": 0, "why": "Eje: revalorizar alimento; base de vida, identidad y derechos."}, {"id": "q71", "tema": "GOB", "q": "71) Gobernanza alimentaria se refiere a:", "opts": ["Coordinación, planificación, monitoreo y evaluación entre instituciones y programas.", "Una única institución que hace todo.", "Solo acuerdos comerciales.", "Publicidad estatal."], "correct": 0, "why": "Gobernanza = articulación efectiva y ciclo de gestión con datos y coordinación."}, {"id": "q72", "tema": "GOB", "q": "72) Sin gobernanza adecuada, suele haber:", "opts": ["Desarticulación, duplicación y vacíos de atención.", "Eficiencia automática.", "Eliminación de crisis.", "Acceso sin recursos."], "correct": 0, "why": "Sin coordinación aparecen superposiciones y huecos; baja efectividad."}, {"id": "q73", "tema": "GOB", "q": "73) Mejora gobernanza:", "opts": ["Sistemas de información, metas e indicadores de seguimiento.", "Evitar datos.", "Cambiar objetivos sin aviso.", "Trabajar sin presupuesto."], "correct": 0, "why": "Datos, metas e indicadores permiten monitoreo/evaluación y corrección."}, {"id": "q74", "tema": "GOB", "q": "74) Aporta legitimidad y control social:", "opts": ["Sociedad civil y academia con participación real.", "Solo marcas.", "Solo bancos.", "Solo publicidad."], "correct": 0, "why": "Participación social y academia fortalecen diagnóstico, control ciudadano y calidad de políticas."}, {"id": "q75", "tema": "GOB", "q": "75) Un programa alimentario eficaz necesita:", "opts": ["Objetivos claros, recursos y coordinación intersectorial.", "Solo voluntad.", "Acciones aisladas.", "Sin evaluación."], "correct": 0, "why": "Sin objetivos, recursos y coordinación no hay efectividad sostenida."}, {"id": "q76", "tema": "GOB", "q": "76) Enfoque intersectorial significa:", "opts": ["Salud, educación, desarrollo social, producción y ambiente coordinan acciones.", "Solo un ministerio.", "Solo el mercado.", "Solo la escuela."], "correct": 0, "why": "Alimentación es multidimensional: requiere articulación de sectores."}, {"id": "q77", "tema": "GOB", "q": "77) Plan sin evaluación puede generar:", "opts": ["Continuidad de fallas sin corrección.", "Mejora automática por tiempo.", "Reducción de desigualdad sin acciones.", "Estabilidad garantizada."], "correct": 0, "why": "Evaluación es clave para corregir, mejorar y justificar recursos."}, {"id": "q78", "tema": "GOB", "q": "78) Gestión con enfoque de derechos exige:", "opts": ["Transparencia, rendición de cuentas y participación.", "Opacidad.", "Criterios secretos.", "Sin reclamos."], "correct": 0, "why": "Enfoque de derechos = accountability: transparencia, participación y mecanismos de reclamo."}, {"id": "q79", "tema": "GOB", "q": "79) Muchas instituciones sin coordinación producen:", "opts": ["Solapamientos y abandono de otros grupos/territorios.", "Cobertura perfecta.", "Reducción de costos sin riesgo.", "Más claridad."], "correct": 0, "why": "Descoordinación = duplicación en unos y vacío en otros."}, {"id": "q80", "tema": "GOB", "q": "80) Ruta de gobernanza efectiva:", "opts": ["Diagnóstico → planificación → ejecución → monitoreo → evaluación → ajuste.", "Ejecución sin diagnóstico.", "Publicidad antes de planificar.", "Acciones aisladas."], "correct": 0, "why": "Ciclo de gestión completo con retroalimentación para corregir y sostener políticas."}];
+
+/* util */
+function shuffle(arr){
+  for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; }
+  return arr;
+}
+function letter(i){ return ["a","b","c","d"][i] || "?"; }
+function randChoice(a){ return a[Math.floor(Math.random()*a.length)]; }
+
+/* balanceador de longitud */
+const NEUTRAL_TAILS = [
+  " en términos generales",
+  " en el contexto del curso",
+  " considerando el enfoque trabajado",
+  " en la práctica",
+  " a nivel general",
+  " según lo visto en clase"
+];
+function balanceOptionsTexts(texts){
+  const lens = texts.map(t=>t.length);
+  const maxLen = Math.max(...lens);
+  const minTarget = Math.floor(maxLen * 0.82);
+  return texts.map(t=>{
+    let out = (t||"").trim();
+    while(out.length < minTarget){
+      out += randChoice(NEUTRAL_TAILS);
+      if(out.length > maxLen + 40) break;
+    }
+    return out;
+  });
+}
+
+/* state */
+let answered=0, corrects=0;
+const answeredSet = new Set();
+const renderedState = new Map();
+
+function temaName(code){
+  return ({"DAA":"Derecho a la alimentación y DDHH","SAN":"Seguridad Alimentaria Nutricional","INSAN":"Inseguridad, vulnerabilidad y estabilidad","CULT":"Cultura alimentaria y consumo","POL":"Políticas sociales y accesibilidad","GLOB":"Globalización y modernidad alimentaria","SBA":"Soberanía alimentaria","GOB":"Gobernanza e institucionalidad"})[code] || code;
+}
+
+function updateStats(){
+  const pct = answered===0 ? 0 : Math.round((corrects/answered)*100);
+  document.getElementById("stats").textContent = `Respondidas: ${answered} · Correctas: ${corrects} · %: ${pct}%`;
+}
+
+function applyFilters(){
+  const tema = document.getElementById("temaSelect").value;
+  document.querySelectorAll(".question").forEach(q=>{
+    const t=q.dataset.tema;
+    q.classList.toggle("hidden", !(tema==="todos" || tema===t));
+  });
+}
+
+function render(){
+  const wrap = document.getElementById("questions");
+  wrap.innerHTML = "";
+  const doBalance = document.getElementById("balanceLen").checked;
+
+  BANK.forEach(item=>{
+    const baseOpts = doBalance ? balanceOptionsTexts([...item.opts]) : [...item.opts];
+    const packed = baseOpts.map((t,i)=>({text:t,isCorrect:(i===item.correct)}));
+    shuffle(packed);
+    const correctIdx = packed.findIndex(x=>x.isCorrect);
+    renderedState.set(item.id, {shuffled: packed, correctIdx});
+
+    const div = document.createElement("div");
+    div.className = "question";
+    div.dataset.tema = item.tema;
+    div.id = item.id;
+
+    const buttons = packed.map((o,idx)=>`<button onclick="pick('${item.id}', ${idx})">${letter(idx)}) ${o.text}</button>`).join("");
+
+    div.innerHTML = `
+      <div class="meta">
+        <div class="tema"><span class="pill">${temaName(item.tema)}</span></div>
+        <div class="tema">ID: ${item.id}</div>
+      </div>
+      <div class="qtitle">${item.q}</div>
+      <div class="options">${buttons}</div>
+      <div class="feedback"></div>
+      <div class="row"><button class="mini" onclick="resetOne('${item.id}')">Reintentar</button></div>
+    `;
+    wrap.appendChild(div);
+  });
+
+  applyFilters();
+  updateStats();
+}
+
+function pick(qid, idx){
+  const item = BANK.find(x=>x.id===qid);
+  const state = renderedState.get(qid);
+  const q = document.getElementById(qid);
+  const optBtns = Array.from(q.querySelectorAll(".options button"));
+  const fb = q.querySelector(".feedback");
+
+  optBtns.forEach(b=>b.disabled=true);
+  const ok = (idx === state.correctIdx);
+
+  if(ok){
+    optBtns[idx].classList.add("correct");
+    fb.style.display="block";
+    fb.innerHTML = `<b>Correcto.</b> <div class="small">${item.why}</div>`;
+  } else {
+    optBtns[idx].classList.add("incorrect");
+    optBtns[state.correctIdx].classList.add("correct");
+    fb.style.display="block";
+    fb.innerHTML = `<b>Incorrecto.</b> <div class="small">La correcta era: <b>${letter(state.correctIdx)})</b> ${item.why}</div>`;
+  }
+
+  if(!answeredSet.has(qid)){
+    answeredSet.add(qid);
+    answered++;
+    if(ok) corrects++;
+    updateStats();
+  }
+}
+
+function resetOne(qid){
+  const item = BANK.find(x=>x.id===qid);
+  const q = document.getElementById(qid);
+  const doBalance = document.getElementById("balanceLen").checked;
+
+  const baseOpts = doBalance ? balanceOptionsTexts([...item.opts]) : [...item.opts];
+  const packed = baseOpts.map((t,i)=>({text:t,isCorrect:(i===item.correct)}));
+  shuffle(packed);
+  const correctIdx = packed.findIndex(x=>x.isCorrect);
+  renderedState.set(item.id, {shuffled: packed, correctIdx});
+
+  q.querySelector(".options").innerHTML = packed.map((o,idx)=>
+    `<button onclick="pick('${item.id}', ${idx})">${letter(idx)}) ${o.text}</button>`
+  ).join("");
+
+  const fb = q.querySelector(".feedback");
+  fb.style.display="none";
+  fb.innerHTML="";
+}
+
+function resetAll(){
+  answered=0; corrects=0;
+  answeredSet.clear();
+  render();
+}
+
+render();
+</script>
+
+</body>
+</html>
